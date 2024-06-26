@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const canvas = document.getElementById('canvas');
     const createNodeButton = document.getElementById('createNodeButton');
+    const clearNodesButton = document.getElementById('clearNodesButton');
 
     let nodeCounter = 1;
 
@@ -96,6 +97,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     createNodeButton.addEventListener('click', () => createNode());
     createNodeButton.addEventListener('touchstart', () => createNode());
+
+    clearNodesButton.addEventListener('click', () => clearNodes());
+    clearNodesButton.addEventListener('touchstart', () => clearNodes());
 
     function addNodeEvents(node) {
         function onMouseDown(event) {
@@ -331,6 +335,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
+    }
+
+    function clearNodes() {
+        document.querySelectorAll('.node').forEach(node => node.remove());
+        document.querySelectorAll('.connection-line').forEach(line => line.remove());
+        localStorage.removeItem('nodeData');
+        localStorage.removeItem('lineData');
     }
 
     const panzoomInstance = panzoom(canvas, {

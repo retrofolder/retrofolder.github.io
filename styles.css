@@ -82,10 +82,9 @@ body, html {
     height: 0;
     pointer-events: none;
 }
-#createNodeButton {
+#createNodeButton, #clearNodesButton {
     position: absolute;
     top: 12px;
-    left: 10px;
     z-index: 2;
     background-color: hsl(177, 85%, 32%);
     color: #fff;
@@ -93,6 +92,16 @@ body, html {
     padding: 15px 20px;
     border-radius: 5px;
     cursor: pointer;
+}
+
+
+
+#createNodeButton {
+    left: 10px;
+}
+
+#clearNodesButton {
+    left: 150px; /* Рядом с кнопкой создания узлов */
 }
 
 .delete-button {
