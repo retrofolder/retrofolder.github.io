@@ -41,6 +41,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 createNode('yellow-node', node.id);
             }
         });
+        plusButton.addEventListener('touchstart', function() {
+            if (node.classList.contains('yellow-node')) {
+                createNode('red-node', node.id);
+            } else if (node.classList.contains('blue-node')) {
+                createNode('yellow-node', node.id);
+            }
+        });
     }
 
     function drawLine(parentNode, childNode) {
@@ -88,9 +95,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     createNodeButton.addEventListener('click', () => createNode());
+    createNodeButton.addEventListener('touchstart', () => createNode());
 
     function addNodeEvents(node) {
-        node.addEventListener('mousedown', function(event) {
+        function onMouseDown(event) {
             if (event.target.tagName.toLowerCase() === 'textarea' || event.target.tagName.toLowerCase() === 'button') {
                 return;
             }
@@ -105,8 +113,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 node.style.left = (pageX - shiftX * transform.scale - transform.x) / transform.scale + 'px';
                 node.style.top = (pageY - shiftY * transform.scale - transform.y) / transform.scale + 'px';
             }
-
-            moveAt(event.pageX, event.pageY);
 
             function onMouseMove(event) {
                 moveAt(event.pageX, event.pageY);
@@ -123,7 +129,43 @@ document.addEventListener("DOMContentLoaded", function() {
             node.ondragstart = function() {
                 return false;
             };
-        });
+        }
+
+        function onTouchStart(event) {
+            if (event.target.tagName.toLowerCase() === 'textarea' || event.target.tagName.toLowerCase() === 'button') {
+                return;
+            }
+
+            event.stopPropagation();
+            const transform = panzoomInstance.getTransform();
+            let shiftX = (event.touches[0].clientX - node.getBoundingClientRect().left) / transform.scale;
+            let shiftY = (event.touches[0].clientY - node.getBoundingClientRect().top) / transform.scale;
+
+            function moveAt(pageX, pageY) {
+                const transform = panzoomInstance.getTransform();
+                node.style.left = (pageX - shiftX * transform.scale - transform.x) / transform.scale + 'px';
+                node.style.top = (pageY - shiftY * transform.scale - transform.y) / transform.scale + 'px';
+            }
+
+            function onTouchMove(event) {
+                moveAt(event.touches[0].pageX, event.touches[0].pageY);
+            }
+
+            document.addEventListener('touchmove', onTouchMove);
+
+            node.addEventListener('touchend', function() {
+                document.removeEventListener('touchmove', onTouchMove);
+                node.ontouchend = null;
+                saveToLocalStorage();
+            });
+
+            node.ondragstart = function() {
+                return false;
+            };
+        }
+
+        node.addEventListener('mousedown', onMouseDown);
+        node.addEventListener('touchstart', onTouchStart);
 
         if (!node.querySelector('.edit-button')) {
             const editButton = document.createElement('button');
@@ -295,7 +337,8 @@ document.addEventListener("DOMContentLoaded", function() {
         bounds: true,
         boundsPadding: 0.1,
         minZoom: 0.5,
-        maxZoom: 3
+        maxZoom: 3,
+        handleTouch: true  // Ensure this option is enabled
     });
 
     canvas.addEventListener('mousedown', function() {
@@ -303,6 +346,14 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     canvas.addEventListener('mouseup', function() {
+        canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('touchstart', function() {
+        canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('touchend', function() {
         canvas.style.cursor = 'grab';
     });
 
