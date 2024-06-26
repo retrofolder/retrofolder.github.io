@@ -106,71 +106,71 @@ document.addEventListener("DOMContentLoaded", function() {
             if (event.target.tagName.toLowerCase() === 'textarea' || event.target.tagName.toLowerCase() === 'button') {
                 return;
             }
-
+    
             event.stopPropagation();
             const transform = panzoomInstance.getTransform();
             let shiftX = (event.clientX - node.getBoundingClientRect().left) / transform.scale;
             let shiftY = (event.clientY - node.getBoundingClientRect().top) / transform.scale;
-
+    
             function moveAt(pageX, pageY) {
                 const transform = panzoomInstance.getTransform();
                 node.style.left = (pageX - shiftX * transform.scale - transform.x) / transform.scale + 'px';
                 node.style.top = (pageY - shiftY * transform.scale - transform.y) / transform.scale + 'px';
             }
-
+    
             function onMouseMove(event) {
                 moveAt(event.pageX, event.pageY);
             }
-
+    
             document.addEventListener('mousemove', onMouseMove);
-
+    
             node.addEventListener('mouseup', function() {
                 document.removeEventListener('mousemove', onMouseMove);
                 node.onmouseup = null;
                 saveToLocalStorage();
             });
-
+    
             node.ondragstart = function() {
                 return false;
             };
         }
-
+    
         function onTouchStart(event) {
             if (event.target.tagName.toLowerCase() === 'textarea' || event.target.tagName.toLowerCase() === 'button') {
                 return;
             }
-
+    
             event.stopPropagation();
             const transform = panzoomInstance.getTransform();
             let shiftX = (event.touches[0].clientX - node.getBoundingClientRect().left) / transform.scale;
             let shiftY = (event.touches[0].clientY - node.getBoundingClientRect().top) / transform.scale;
-
+    
             function moveAt(pageX, pageY) {
                 const transform = panzoomInstance.getTransform();
                 node.style.left = (pageX - shiftX * transform.scale - transform.x) / transform.scale + 'px';
                 node.style.top = (pageY - shiftY * transform.scale - transform.y) / transform.scale + 'px';
             }
-
+    
             function onTouchMove(event) {
                 moveAt(event.touches[0].pageX, event.touches[0].pageY);
             }
-
+    
             document.addEventListener('touchmove', onTouchMove);
-
+    
             node.addEventListener('touchend', function() {
                 document.removeEventListener('touchmove', onTouchMove);
                 node.ontouchend = null;
                 saveToLocalStorage();
             });
-
+    
             node.ondragstart = function() {
                 return false;
             };
         }
-
+    
         node.addEventListener('mousedown', onMouseDown);
         node.addEventListener('touchstart', onTouchStart);
-
+    
         if (!node.querySelector('.edit-button')) {
             const editButton = document.createElement('button');
             editButton.classList.add('edit-button');
@@ -178,13 +178,20 @@ document.addEventListener("DOMContentLoaded", function() {
             node.appendChild(editButton);
             attachEditEvent(editButton, node);
         }
-
+    
         if (!node.querySelector('.delete-button')) {
             const deleteButton = document.createElement('button');
             deleteButton.classList.add('delete-button');
             deleteButton.innerText = '×';
             node.appendChild(deleteButton);
             deleteButton.addEventListener('click', function() {
+                if (confirm("Вы уверены, что хотите удалить эту ноду?")) {
+                    deleteNodeWithChildren(node);
+                    saveToLocalStorage();
+                }
+            });
+    
+            deleteButton.addEventListener('touchstart', function() {
                 if (confirm("Вы уверены, что хотите удалить эту ноду?")) {
                     deleteNodeWithChildren(node);
                     saveToLocalStorage();
@@ -230,25 +237,25 @@ document.addEventListener("DOMContentLoaded", function() {
             const saveButton = node.querySelector('.save-button');
             textarea.focus();
             textarea.select();
-
+    
             saveButton.style.display = 'block';
-
+    
             textarea.addEventListener('mousedown', function(event) {
                 event.stopPropagation();
             });
-
-            textarea.addEventListener('dblclick', function(event) {
+    
+            textarea.addEventListener('touchstart', function(event) {
                 event.stopPropagation();
             });
-
+    
             saveButton.addEventListener('mousedown', function(event) {
                 event.stopPropagation();
             });
-
-            saveButton.addEventListener('dblclick', function(event) {
+    
+            saveButton.addEventListener('touchstart', function(event) {
                 event.stopPropagation();
             });
-
+    
             saveButton.addEventListener('click', function() {
                 const newText = textarea.value;
                 node.innerHTML = newText.replace(/\n/g, '<br>');
@@ -267,6 +274,73 @@ document.addEventListener("DOMContentLoaded", function() {
                             saveToLocalStorage();
                         }
                     });
+    
+                    deleteButton.addEventListener('touchstart', function() {
+                        if (confirm("Вы уверены, что хотите удалить эту ноду?")) {
+                            deleteNodeWithChildren(node);
+                            saveToLocalStorage();
+                        }
+                    });
+                }
+                attachEditEvent(editButton, node);
+                if (node.getAttribute('data-type') !== 'red-node') {
+                    addPlusButton(node);
+                }
+                saveToLocalStorage();
+            });
+        });
+    
+        editButton.addEventListener('touchstart', function() {
+            const currentText = node.querySelector('textarea') ? node.querySelector('textarea').value : node.innerHTML.replace(/<button[^>]*>(.*?)<\/button>/g, '').replace(/<br\s*\/?>/gi, '\n').trim();
+            node.innerHTML = `<div class='edit-container'><textarea>${currentText}</textarea><button class='save-button'>Save</button></div>`;
+            const textarea = node.querySelector('textarea');
+            const saveButton = node.querySelector('.save-button');
+            textarea.focus();
+            textarea.select();
+    
+            saveButton.style.display = 'block';
+    
+            textarea.addEventListener('mousedown', function(event) {
+                event.stopPropagation();
+            });
+    
+            textarea.addEventListener('touchstart', function(event) {
+                event.stopPropagation();
+            });
+    
+            saveButton.addEventListener('mousedown', function(event) {
+                event.stopPropagation();
+            });
+    
+            saveButton.addEventListener('touchstart', function(event) {
+                event.stopPropagation();
+            });
+    
+            saveButton.addEventListener('click', function() {
+                const newText = textarea.value;
+                node.innerHTML = newText.replace(/\n/g, '<br>');
+                node.appendChild(editButton);
+                if (node.querySelector('.delete-button')) {
+                    const deleteButton = node.querySelector('.delete-button');
+                    node.appendChild(deleteButton);
+                } else {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.innerText = '×';
+                    node.appendChild(deleteButton);
+                    deleteButton.addEventListener('click', function() {
+                        if (confirm("Вы уверены, что хотите удалить эту ноду?")) {
+                            deleteNodeWithChildren(node);
+                            saveToLocalStorage();
+                        }
+                    });
+    
+                    deleteButton.addEventListener('touchstart', function() {
+                        if (confirm("Вы уверены, что хотите удалить эту ноду?")) {
+                            deleteNodeWithChildren(node);
+                            saveToLocalStorage();
+                        }
+                    });
                 }
                 attachEditEvent(editButton, node);
                 if (node.getAttribute('data-type') !== 'red-node') {
@@ -276,7 +350,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
-
     function saveToLocalStorage() {
         const nodeData = [];
         const lineData = [];

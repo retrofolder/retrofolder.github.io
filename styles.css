@@ -74,6 +74,25 @@ body, html {
     font-size: 12px;
     margin-top: 5px;
     align-self: center;
+    -webkit-tap-highlight-color: transparent; /* Убираем выделение на мобильных устройствах */
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 12px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent; /* Убираем выделение на мобильных устройствах */
 }
 
 .arrow {
@@ -104,22 +123,6 @@ body, html {
     left: 150px; /* Рядом с кнопкой создания узлов */
 }
 
-.delete-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: #ff0000;
-    color: #fff;
-    border: none;
-    padding: 5px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 12px;
-    line-height: 12px;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-}
 
 .blue-node {
     background-color: #15283b;
