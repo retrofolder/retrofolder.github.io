@@ -1,0 +1,155 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000; /* Темный фон */
+}
+
+#backgroundCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Поставим на самый нижний уровень */
+    background-color: rgba(0, 0, 0, 0.1); /* Сделаем фон полупрозрачным */
+}
+
+#canvas {
+    position: relative;
+    width: 200%;
+    height: 200%;
+    background-color: transparent; /* Прозрачный фон, чтобы видеть canvas */
+    cursor: grab;
+    z-index: 1; /* Размещаем перед backgroundCanvas */
+}
+
+.node {
+    position: absolute;
+    width: 300px; 
+    height: 180px; 
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: move;
+    user-select: none; /* предотвращает выделение текста при перетаскивании */
+    flex-direction: column; /* Для вертикального размещения элементов */
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: center;
+    word-wrap: break-word; /* Перенос слов */
+    overflow: hidden; /* Скрыть переполнение */
+}
+
+/* Новые стили для контейнера редактирования */
+.edit-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.node textarea {
+    width: 220px;
+    height: 100px; /* Увеличиваем высоту */
+    margin-bottom: 5px;
+    margin-top: 15px;
+    resize: none; /* Запретить изменение размера */
+    overflow: auto; /* Автоматический скролл */
+}
+
+/* Новые стили для кнопок */
+.edit-button,
+.save-button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 5px;
+    align-self: center;
+}
+
+.arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+#createNodeButton {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    z-index: 2;
+    background-color: hsl(177, 85%, 32%);
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 12px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
+.blue-node {
+    background-color: #15283b;
+    color: #fff;
+}
+
+.yellow-node {
+    background-color: #e6c532;
+    color: #000;
+}
+
+.red-node {
+    background-color: #bd3329;
+    color: #fff;
+}
+
+.plus-button {
+    background-color: #00bcd4;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.connection-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0; /* Убедитесь, что SVG находится позади нод */
+}
