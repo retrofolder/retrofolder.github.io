@@ -9,18 +9,38 @@ document.addEventListener("DOMContentLoaded", function() {
         const newNode = document.createElement('div');
         newNode.classList.add('node', type);
         newNode.id = 'node' + nodeCounter++;
-        newNode.style.top = '100px';
-        newNode.style.left = '100px';
-        newNode.innerHTML = 'Новая ячейка';
         newNode.setAttribute('data-type', type);
+    
         if (parentId) {
             newNode.setAttribute('data-parent', parentId);
+            const parentNode = document.getElementById(parentId);
+            const parentRect = parentNode.getBoundingClientRect();
+            const transform = panzoomInstance.getTransform();
+    
+            // Найдем количество уже существующих дочерних нод
+            const existingChildren = document.querySelectorAll(`.node[data-parent="${parentId}"]`).length;
+    
+            // Устанавливаем позицию новой ноды с учетом количества существующих дочерних нод
+            const offsetX = existingChildren * 20;  // Отступ по горизонтали
+            const offsetY = (parentRect.height + 50) * (existingChildren + 1);  // Отступ по вертикали
+    
+            newNode.style.top = (parentRect.top + offsetY - transform.y) / transform.scale + 'px';
+            newNode.style.left = (parentRect.left + offsetX - transform.x) / transform.scale + 'px';
+        } else {
+            // Устанавливаем позицию новой ноды по умолчанию
+            newNode.style.top = '100px';
+            newNode.style.left = '100px';
         }
+    
+        newNode.innerHTML = 'Новая ячейка';
+    
         if (type !== 'red-node') {
             addPlusButton(newNode);
         }
+    
         canvas.appendChild(newNode);
         addNodeEvents(newNode);
+    
         if (parentId) {
             const parentNode = document.getElementById(parentId);
             if (parentNode) {
